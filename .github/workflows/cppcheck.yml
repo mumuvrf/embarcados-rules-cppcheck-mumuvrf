@@ -1,0 +1,25 @@
+name: rules_basic_practice
+run-name: Checking rules basic practice
+on: [push]
+jobs:
+  rules_basic_practice:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+  
+      - name: Install cppcheck 
+        run: |
+          sudo apt install cppcheck
+          
+      - name: Install firmware-best-practice-checker 
+        run: |
+          git clone https://github.com/insper-education/firmware-best-practice-checker checker
+          python -m pip install --upgrade pip
+          pip install -r checker/requirements.txt
+          
+      - name: run cppcheck
+        run: |
+          cppcheck -iASF -ioled --enable=all --suppress=unreadVariable --suppress=missingIncludeSystem --suppress=integerOverflow --suppress=unmatchedSuppression --error-exitcode=2 --dump main.c
